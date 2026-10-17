@@ -29,7 +29,7 @@ async function exportSigned(){const n=await signAll();const x=LG0.export();retur
 
 // Verified import. Rules: signature must verify; an author id keeps the first key seen for it; an unsigned record from
 // an author with a known key is refused; a place name belongs to whoever claimed it first; the rest append.
-const WORLD=new Set(['PLANT','PLACE','BUILD','INSCRIBE','INSTALL','AVATAR','BOTTLE','ADOPT']);
+const WORLD=new Set(['PLANT','PLACE','BUILD','INSCRIBE','INSTALL','AVATAR','BOTTLE','ADOPT','SHELL','TRADE','GUEST']);
 async function importVerified(payload){const list=Array.isArray(payload)?payload:payload?.records;if(!Array.isArray(list))return {ok:false,error:'INVALID_LEDGER'};const s=S(),ring=s.keyring,ok=[],rejected=[];
  for(const e of list){if(!e||typeof e!=='object'||typeof e.by!=='string'){rejected.push({reason:'MALFORMED'});continue}const known=ring[e.by];
   if(e.sig){const v=await verify(e);if(v!==true){rejected.push({by:e.by,kind:e.kind,t:e.t,reason:'BAD_SIGNATURE'});continue}if(known&&known!==e.pk){rejected.push({by:e.by,kind:e.kind,t:e.t,reason:'KEY_MISMATCH'});continue}if(!known)ring[e.by]=e.pk}
@@ -39,7 +39,7 @@ async function importVerified(payload){const list=Array.isArray(payload)?payload
  const r=LG0.import(ok);s.rejected.push(...rejected.map(x=>({...x,at:Date.now()})));while(s.rejected.length>64)s.rejected.shift();compactIfNeeded();try{c9save()}catch(x){}return {ok:true,imported:r.imported,accepted:ok.length,rejected:rejected.length,rejections:rejected,unsigned:ok.filter(e=>!e.sig).length,keyring_size:Object.keys(ring).length}}
 
 // Compaction: never lose a tree, a place, a build, a word on a wall of yours, a key; trim chatter oldest first.
-const KEEP_TAIL={ROW:16,ARRIVE:32,CHAT:120,POST:24,DANCE:16,SONG:12,FIREWORK:8,MEET:16,DIG:8,OPEN:4,SCORE:64};
+const KEEP_TAIL={ROW:16,ARRIVE:32,CHAT:120,POST:24,DANCE:16,SONG:12,FIREWORK:8,MEET:16,DIG:8,OPEN:4,SCORE:64,HOP:16};
 function compact(){const all=records();const keep=new Set();const byKind={};for(let i=all.length-1;i>=0;i--){const e=all[i],k=e.kind;if(WORLD.has(k)){keep.add(i);continue}byKind[k]=(byKind[k]||0)+1;if(byKind[k]<=(KEEP_TAIL[k]??16))keep.add(i)}
  const best={};for(let i=0;i<all.length;i++){const e=all[i];if(e.kind==='SCORE'&&(!best[e.by]||e.score>all[best[e.by]].score))best[e.by]=i}for(const i of Object.values(best))keep.add(i);
  const out=all.filter((_,i)=>keep.has(i));if(out.length<all.length){C9.ledger.records=out;S().compactions++;return all.length-out.length}return 0}

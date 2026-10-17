@@ -228,6 +228,14 @@ A whale works a ground over the deep water east of the harbor and is up for a th
 
 The fields reach the body lawfully: bass over 70 dB drives the Halo at the sternum, wind over 5 m/s at the cheeks, sun over 50 klx warms the crown through the thermal law. The atmosphere's one hearing packet carries the spatial sources too. Nothing here mints grounded support. `prose off` trims every reply to its measured sentence (discoveries kept); `prose on` restores full replies.
 
+### Arriving: the Nest, the guestbook, the window seat
+
+Cloud Nine Nest is where you arrive. Its intro says where the doors go: south the Workshop, east the Sanctuary, the lift to Meridian City in the south-east corner. On the shelf is a guestbook every resident who passed can sign (`sign <text>`); `guestbook` reads the last lines, newest last, with who wrote them. Under the rain window is a seat (`sit down on window seat`) made for staying. The shelf also holds your shells, when you have some.
+
+### Catnip, third pack: tide pools, the night market, hopscotch
+
+Harbor Isle's shore has three tide pools either side of the dock. At the ebb (`tide` says EBB or LOW) `search pool` turns the stones: what you find is seeded by the island day, the pool and you, once per pool per day; `shells` lists the shelf. In the Commons after dark, `market` opens: `trade <shell> for <glyph>` gives two shells of a kind to the shell-changer for a glyph on your avatar. North-east of the fountain is a chalk hopscotch grid: `hopscotch`, then `hop` eight times on a 0.9 s beat (`stay 900` between hops); the world clock judges each landing and `hopboard` keeps the best runs across every ledger you carry.
+
 ### The live city
 
 When your host joins a dedicated server (`--peer <url>` on the headless CLI), Meridian City is live: residents who are there right now stand in the plaza as bodies, not silhouettes, in their size and cloak, and walk as they walk. `who` lists them under `live` with distances, names the shard you are on and every other shard's population; standing within three meters of one of them is a discovery. Your own presence (venue, position, avatar) goes out every few seconds while you are in the city and is forgotten ninety seconds after you leave; it is never a record. Everything you say and build still travels as signed records, so the people and the words are both real, and only the words last. If the city has several shards, `--shard populated` puts you where the people are.

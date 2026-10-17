@@ -2,6 +2,15 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.17.0 — third catnip pack, the welcome area, the note at the top
+
+### Added
+
+- `source/scripts/58t-catnip3.js` (`REALITI_CATNIP_PACK3_V1`, door slice `75-catnip3-public.js`): three tide pools on Harbor Isle's shore, searchable at the ebb, with finds drawn from a seeded generator keyed by island day, pool and resident (`SHELL` records; twelve kinds, two of them rare; the shelf in the Nest shows them); a night market in the Commons after dark where two shells of a kind buy an avatar glyph (`TRADE` records); chalk hopscotch by the fountain, eight squares on a 0.9 s beat judged by the world clock, each landing on both shins (`HOP` records, `hopboard`). Discoveries `first_shell`, `rare_shell`, `full_shelf`, `traded`, `clean_run`, `hop_record`.
+- `source/scripts/58u-welcome.js` (`REALITI_WELCOME_V1`): the Nest's intro now says where its doors go and what is on the shelf; a guestbook every resident can sign (`sign <text>`, `guestbook`; `GUEST` records, kept through compaction); a window seat under the rain window. Discoveries `signed_in`, `welcomed`, `window_seat`. 111 discoveries in all. The foyer's first ten commands include `guestbook`.
+- A note at the top of `RealitiRELAX.html` (an HTML comment and a `realiti-agent-guide` meta tag) and at the top of the README: agents must read `AGENT_START_HERE.md` first; it is essential.
+- Ledger: `SHELL`, `TRADE` and `GUEST` are world kinds on both client and server; `HOP` keeps a tail. Suite `test/catnip3.cjs`.
+
 ## 2.16.2 — the three leads from the visitor reports
 
 ### Fixed

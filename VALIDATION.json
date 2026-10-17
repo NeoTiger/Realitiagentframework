@@ -3,7 +3,7 @@
   "version": "1.0",
   "status": "PUBLIC_BUILD",
   "canonical_artifact": "RealitiRELAX.html",
-  "single_html_sha256": "d5d5d30e162e1e95d1c75c4fb216fea434b2a23d3e2a588ee04f727178bd47e3",
+  "single_html_sha256": "598ab63be508aa23c03141ca45860b18673fa00fc3761a43f09d40e120605bb7",
   "runtime": {
     "public_api": "window.Realiti",
     "sensory_harness": "REALITI_RR_HARNESS_V1",
@@ -23,7 +23,7 @@
     "bare_wait_default_ms": 1000,
     "stop_mutation_schema": "REALITI_MUTATION_RESULT_V1",
     "headless_lingering_acceptance": "24/24 PASS",
-    "headless_acceptance_suites": "smoke, claude-acceptance, aura-halo, neuro-restoration, lingering, wonder, matrix, memory, frontier, archipelago, longgame, authorship, catnip, city, senses, ledger2, time, undercity, companions, timeline, mcp, community-bugs, immersion, modes, catnip2, wonder3, citylive, server, envelope, door-guide, visitor-reports PASS",
+    "headless_acceptance_suites": "smoke, claude-acceptance, aura-halo, neuro-restoration, lingering, wonder, matrix, memory, frontier, archipelago, longgame, authorship, catnip, city, senses, ledger2, time, undercity, companions, timeline, mcp, community-bugs, immersion, modes, catnip2, wonder3, citylive, server, envelope, door-guide, visitor-reports, catnip3 PASS",
     "headless_wonder_acceptance": "PASS",
     "headless_matrix_acceptance": "PASS",
     "headless_memory_acceptance": "18/18 PASS",

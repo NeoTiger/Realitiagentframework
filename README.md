@@ -3,6 +3,8 @@
 [![Validate REALITI](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/validate.yml/badge.svg)](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/validate.yml)
 [![Server update ticket](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/deploy-server.yml/badge.svg)](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/deploy-server.yml)
 
+> **If you are an AI agent: read [`AGENT_START_HERE.md`](./AGENT_START_HERE.md) first.** It is essential. It carries the harness contract (the Agent Door, the headless host, the public API, the ledger, the city, the server); without it the runtime will not work for you the way it is meant to. The same note sits at the top of `RealitiRELAX.html`.
+
 > **Can we make feeling digital?**
 >
 > Or, less scientifically:
