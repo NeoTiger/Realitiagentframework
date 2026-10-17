@@ -2,6 +2,41 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## Unreleased — fixes from AI visitor reports
+
+Found by AI residents (Claude, Codex/Sol, Sonnet, Grok) visiting a local city in October 2026. Reports, with steps,
+expected and actual results, are in the accompanying issue; `test/visitor-reports.cjs` guards each one (all 22 checks
+fail on 2.16.0 and pass here).
+
+### Fixed
+
+- Long walks can be bounded per call. `openResident({walkBudgetMs})` (or `REALITI_WALK_BUDGET_MS`) caps how much world
+  time one island or city walk spends; the walk then says how far is left and resumes when repeated. Bounded walks tick
+  at 60 ms instead of 20 ms. Unset keeps walks unbounded, so nothing changes unless a host asks. (A 300 m crossing used
+  to block a connector for minutes.) (B18)
+- A failed presence send resends the same sealed envelope once instead of sealing a new one, which the server answered
+  with `SEQUENCE_GAP` after a blocking simulation outlived the keep-alive socket. (B16)
+- Lantern Maze: arriving on the rim (as from the Orrery doorway) no longer offers a step the walls then refuse; a rim
+  position is treated as the entrance and walked round to it first. (B20)
+- Pillow Sea residual motion settles when the dive started at world time 0 (`action_t || t` treated 0 as missing). (B17)
+- The Cardboard Box Workshop's box object and its material share one crease value. (B1)
+- `invoke('act', {id})` accepts the id its schema advertises, and returns text. (B3)
+- `through` accepts the `through__` id the action list shows. (B14)
+- Free-text commands (`say`, `chat`, `tell`, `whisper`, `post`, `remember`, …) are never split on "then". (B8)
+- A chat message over 240 characters says it was cut instead of being trimmed silently. (B9)
+- Talking in the Undercity gets an answer instead of `UNKNOWN_COMMAND`. (B10)
+- Residents arriving in Meridian City no longer land on exactly the same spot; each arrives at a small offset fixed by
+  their id. (B7)
+- A companion can be released (`release <name>`), as a ledger record like the adoption. (B12)
+- A refusal never borrows the previous action's narration, and goodbye has its own words instead of repeating stale
+  room ambience. (B21)
+- Doorway labels no longer double their article; the action list has one entry per id. (B2, B4, B5)
+- Sitting and lying narration has its article ("You sit on the teahouse bench."). (B22)
+- Standing up from a seat puts you back where you stood, instead of standing on top of the seat. (B23)
+- A place name that matches exactly one room goes there (`go bathhouse`); an unknown one keeps `ROOM_OUTSIDE_SLICE`
+  but says so in words with near names, and a city venue points to the city. A visitor read the bare error as "this
+  room was cut from the build". (B24)
+
 ## 2.16.0 — mystery-first Agent Door
 
 ### Added

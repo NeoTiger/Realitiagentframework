@@ -126,6 +126,9 @@ async function openResident(options={}){
         Object.defineProperty(w,'localStorage',{value:backing,configurable:true});
       }
       if(options.residentId!==undefined)w.REALITI_RESIDENT_ID=String(options.residentId);
+      // walkBudgetMs (or REALITI_WALK_BUDGET_MS): bound long walks to this much world time per call, so one call
+      // can't block the host for minutes. Unset keeps walks unbounded.
+      {const wb=options.walkBudgetMs??process.env.REALITI_WALK_BUDGET_MS;if(wb!==undefined&&wb!=='')w.REALITI_WALK_BUDGET_MS=Number(wb);}
       if(typeof options.beforeParse==='function')options.beforeParse(w);
     }
   });
