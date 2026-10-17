@@ -104,7 +104,7 @@ function step(dt,id='resident:self'){
   dir[2]=0;if(toward<=.03&&len(r.v)<.05){r.intent=null}else u=scale(norm(dir),Math.min(r.speed||WALK,toward/(4*TAU)))}
  if(!it&&len(r.v)<EPS)return false;
  const {v,dp}=servo(r.v,u,TAU,dt);r.v=v;
- if(len(dp)>EPS){const res=resolveMove(r,dp);r.walked=(r.walked||0)+res.moved;if(res.blocked_by){r.v=[0,0,0];r.last_block=res.blocked_by;r.intent=null}
+ if(len(dp)>EPS){const res=resolveMove(r,dp);r.walked=(r.walked||0)+res.moved;if(res.blocked_by){r.v=[0,0,0];r.last_block=res.blocked_by;r.block_why=res.sea?'sea':res.cliff?'cliff':'contact';r.intent=null}
   const P=portalHere(r);if(P&&it){if(it.allow_portal){traverse(r,P.id);r.last_portal=P.id}else if(it.kind==='move'){r.at_portal=P.id;r.intent=null;r.v=[0,0,0]}}bump()}
  if(len(r.v)<1e-3&&!r.intent)r.v=[0,0,0];
  return !!(r.intent||len(r.v)>EPS);

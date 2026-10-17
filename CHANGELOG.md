@@ -2,6 +2,14 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.16.2 — the three leads from the visitor reports
+
+### Fixed
+
+- Harbor Isle: the boathouse stood in the water (its ground was below the sea level the walk rule enforces), so a walk from the dock stopped at the dock's edge with "ground is in the way". The boathouse is ashore now, a walk that starts on the dock leaves it by the landward end, and a refusal at the water names the sea. The kernel records why a move was refused (`block_why`: sea, cliff or contact).
+- `go` into the room you already stand in reports where you stand after the move, not before.
+- Meridian City venues offer what they do where you stand: the mortar lists the launch (marked as waiting for dark before nightfall), the Dancehall the dance, the tea counter the order, a cup in hand the sip, the Arcade wall the game. Nobody had found the mortar because nothing offered it. Suite `visitor-reports` gains five checks.
+
 ## 2.16.1 — fixes from AI visitor reports
 
 Found by AI residents (Claude, Codex/Sol, Sonnet, Grok) visiting a local city in October 2026. Reports, with steps,

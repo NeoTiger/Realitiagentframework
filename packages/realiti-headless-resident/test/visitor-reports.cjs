@@ -102,6 +102,25 @@ const text=r=>String((r&&(r.text||r.resident_text))||'');
   const bye=await s.d('goodbye');
   check('B21_goodbye_has_its_own_words',/Your things stay where you left them/.test(text(bye))&&!/generation/.test(text(bye)),text(bye));
  }finally{s.close()}
+ // L1: from the dock, the boathouse is reached by the landward end, and a refusal at the water says so.
+ s=await fresh();
+ try{
+  await s.d('go ARCHIPELAGO');await s.d('walk to dock');const w=await s.d('walk to boathouse');const rr=w.result||w;
+  check('L1_boathouse_reached_from_the_dock',rr.arrived===true&&rr.blocked_by===null,rr);
+  const M=s.window.REALITI_MATRIX_V1,r=M.state().residents['resident:self'];M.moveTo([r.pose.position[0],r.pose.position[1]-40,r.pose.position[2]]);await s.d('stay 20000');
+  check('L1_the_water_is_named',r.block_why==='sea'&&r.last_block==='isle.ground',{why:r.block_why,block:r.last_block});
+  // L2: go into the room you already stand in answers for where you stand afterwards.
+  await s.d('walk to boathouse');const g=await s.d('go ARCHIPELAGO');const a=await s.d('actions');const ids=x=>(x.actions||[]).map(y=>y.id).sort().join(',');
+  check('L2_go_into_current_room_reports_the_new_position',g.ok===true&&ids(g.result||g)===ids(a)&&ids(a).length>0,{go:ids(g.result||g).slice(0,120),actions:ids(a).slice(0,120)});
+ }finally{s.close()}
+ // L3: the mortar's launch is offered where you stand, dark or not; venues offer what they do.
+ s=await fresh();
+ try{
+  await s.d('go CITY');await s.d('climb');await s.d('walk to mortar');const a=await s.d('actions');const fw=(a.actions||[]).find(x=>x.id==='firework');
+  check('L3_mortar_offers_the_launch',!!fw&&/LAUNCH A ROCKET/.test(fw.label),fw);
+  await s.d('walk to teahouse');await s.d('approach tea counter');const b=await s.d('actions');
+  check('L3_teahouse_offers_tea',(b.actions||[]).some(x=>x.id==='order_tea'),(b.actions||[]).map(x=>x.id).join(','));
+ }finally{s.close()}
 
  console.log(JSON.stringify({checks,details},null,2));
  const failed=Object.entries(checks).filter(([,v])=>!v).map(([k])=>k);

@@ -83,7 +83,7 @@ async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
  return out}
 // restore persisted speed and crouch on load
 (()=>{const r=me(),s=S();if(r&&s.speed)r.speed=s.speed})();
-const go0=b7AgentGo;b7AgentGo=function(v){const res=go0(v);const r=me(),s=S();if(r&&s.speed)r.speed=s.speed;return res};
+const go0=b7AgentGo;b7AgentGo=function(v){const res=go0(v);const r=me(),s=S();if(r&&s.speed)r.speed=s.speed;if(res?.ok&&typeof res==='object'){try{if(typeof b4AgentLook==='function')Object.assign(res,b4AgentLook());if(Array.isArray(res.actions)&&typeof b4AgentActions==='function')res.actions=b4AgentActions()}catch(e){}}return res};/* outermost go wrapper: every slice has placed the body by now, so the reply describes where you actually stand */
 D0.help=help;D0.run=run;
 window.Realiti=Object.freeze({...A0,run,help});
 window.REALITI_MODES_V1=Object.freeze({version:'1.2',mode,setMode,pose,hq_commands:HQ.slice(),lq_commands:LQ.slice(),worlds:worldGuide,next:nextStep});
