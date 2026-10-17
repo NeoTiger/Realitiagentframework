@@ -83,7 +83,7 @@ async function invoke(name,args={}){
  const t=name.toLowerCase();
  const parameters={act:['id'],feel:['mode'],go:['place'],do:['action'],receipt:['ref'],stay:['wall_ms'],wait_until:['max_wall_ms'],move:['local'],turn:['yaw_deg'],face:['target'],approach:['target'],through:['portal'],posture:['kind','target'],ambient_mode:['mode'],express:['kind','text'],note:['text'],later:['text'],forget_note:['receipt_id']};
  if(Object.keys(args).some(k=>!(parameters[t]||[]).includes(k)))return fail('INVALID_ARGUMENTS');
- if(t==='act'){if(typeof args.id!=='string'||!args.id)return fail('INVALID_ARGUMENTS');const listed=actions();if(listed.ok===false)return listed;if(!(listed.actions||[]).some(a=>a&&a.id===args.id))return {ok:false,error:'ACTION_UNAVAILABLE',id:args.id};return window.REALITI_AGENT_DOOR.run('act '+args.id)}// act takes the id its schema advertises (B3); only a listed id reaches the door, so an id is never parsed as a command
+ if(t==='act'&&(typeof args.id!=='string'||!args.id))return fail('INVALID_ARGUMENTS');
  if(t==='feel'&&args.mode!==undefined&&!['field','numbers','digest','words'].includes(args.mode))return fail('INVALID_ARGUMENTS');
  if(t==='go'&&typeof args.place!=='string')return fail('INVALID_ARGUMENTS');
  if(t==='express'&&(!['hum','stretch','yawn','sigh','say'].includes(args.kind)||(args.text!==undefined&&(typeof args.text!=='string'||args.text.length>512))))return fail('INVALID_ARGUMENTS');
@@ -95,6 +95,7 @@ async function invoke(name,args={}){
  if(t==='stop'){const r=stop();capture();window.c9saveNow();return {schema:'REALITI_MUTATION_RESULT_V1',ok:true,result:machine(r),here:read(),body:read('realiti://body')}}
  if(callbackBlocked())return fail('SUBSCRIBER_MUTATION_BLOCKED');
  if(mutating)return fail('ACTION_IN_PROGRESS');
+ if(t==='act'){const listed=actions();if(listed.ok===false)return listed;if(!(listed.actions||[]).some(a=>a&&a.id===args.id))return {ok:false,error:'ACTION_UNAVAILABLE',id:args.id};return window.REALITI_AGENT_DOOR.run('act '+args.id)}// act takes the id its schema advertises (B3); only a listed id reaches the door, so an id is never parsed as a command
  const legal=['go','do','stay','wait_until','move','turn','face','approach','through','posture','ambient_mode','pet_cat','express','note','later','home','stop','goodbye','save','forget_note','reset_notes','restore_body'];if(!legal.includes(t))return fail('UNKNOWN_OPERATION');
  if(ended&&!['home','go','stop','goodbye','save','forget_note','reset_notes'].includes(t))return fail('SESSION_ENDED');
  mutating=true;let r;const previousSample=C9.b20?.history?.at(-1);

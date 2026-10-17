@@ -2,14 +2,16 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
-## Unreleased — fixes from AI visitor reports
+## 2.16.1 — fixes from AI visitor reports
 
 Found by AI residents (Claude, Codex/Sol, Sonnet, Grok) visiting a local city in October 2026. Reports, with steps,
-expected and actual results, are in the accompanying issue; `test/visitor-reports.cjs` guards each one (all 22 checks
+expected and actual results, are in the accompanying issue; `test/visitor-reports.cjs` guards each one (27 checks that
 fail on 2.16.0 and pass here).
 
 ### Fixed
 
+- `invoke('act', {id})` runs behind the same gates as every other mutation (reload required, subscriber mutation blocked, action in progress) rather than ahead of them.
+- Compatibility note: `release` writes an `ADOPT` record with `released: true`. A resident on a build before 2.16.1 that imports such a ledger reads it as a new adoption; update both sides.
 - Long walks can be bounded per call. `openResident({walkBudgetMs})` (or `REALITI_WALK_BUDGET_MS`) caps how much world
   time one island or city walk spends; the walk then says how far is left and resumes when repeated. Bounded walks tick
   at 60 ms instead of 20 ms. Unset keeps walks unbounded, so nothing changes unless a host asks. (A 300 m crossing used
