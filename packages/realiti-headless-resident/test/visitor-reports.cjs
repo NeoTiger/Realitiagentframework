@@ -14,7 +14,8 @@ const text=r=>String((r&&(r.text||r.resident_text))||'');
 (async()=>{
  let s;
  // B18: a host can bound long walks per call; the walk stops, says how far is left, and resumes on repeat.
- s=await fresh({walkBudgetMs:30000});
+ for(const bad of [-1,0,'abc']){let code=null;try{(await fresh({walkBudgetMs:bad})).close()}catch(e){code=e.code}check('B18_invalid_walk_budget_is_refused_'+String(bad),code==='INVALID_WALK_BUDGET',code)}
+ s=await fresh({walkBudgetMs:30000.5});
  try{
   await s.d('go ARCHIPELAGO');const t0=Date.now();const w=await s.d('walk to cairn');const ms=Date.now()-t0;
   check('B18_bounded_walk_reports_what_is_left',w.result?.partial===true&&/still to go/.test(text(w)),{text:text(w),host_ms:ms});
@@ -48,7 +49,9 @@ const text=r=>String((r&&(r.text||r.resident_text))||'');
  try{
   // B12: a companion can be released.
   await s.d('go MERIDIAN_CITY');await s.d('act walk_to__teahouse');await s.d('act walk_to__teahouse');await s.d('act approach__city.stray');
-  await s.d('adopt Pip');const rel=await s.d('release Pip');const comp=await s.d('companion');
+  await s.d('adopt Pip then companion');const comp0=await s.d('companion');
+  check('fixed_grammar_commands_still_chain',/Pip/.test(text(comp0))&&!/No companion/.test(text(comp0)),text(comp0));
+  const rel=await s.d('release Pip');const comp=await s.d('companion');
   check('B12_a_companion_can_be_released',rel.ok!==false&&/curls up to sleep/.test(text(rel))&&/No companion/.test(text(comp)),{rel:text(rel),comp:text(comp)});
   // B22: posture narration has its article. B23: standing up from a seat puts you back on the floor.
   await s.d('act approach__teahouse.bench');const before=s.publicApi.read('realiti://space');
@@ -63,6 +66,8 @@ const text=r=>String((r&&(r.text||r.resident_text))||'');
   // B3: invoke('act',{id}) takes the id its schema advertises, and has text.
   const a=await s.publicApi.invoke('act',{id:'watch_rain'});
   check('B3_invoke_act_takes_its_advertised_id',a.ok!==false&&!!text(a),text(a));
+  const chained=await s.publicApi.invoke('act',{id:'watch_rain then goodbye'});const still=s.publicApi.read('realiti://here').session;
+  check('B3_act_id_is_data_not_a_command',chained.ok===false&&chained.error==='ACTION_UNAVAILABLE'&&still!=='ended',{error:chained.error,session:still});
   // B1: the cardboard crease is one value, whichever object you read it through.
   await s.d('go CARDBOARD_BOX_WORKSHOP');for(let i=0;i<3;i++)await s.d('act fold_flap');
   const tap=text(await s.d('act tap_box'));
