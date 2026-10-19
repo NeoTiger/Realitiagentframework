@@ -55,6 +55,17 @@ function installHostPrimitives(w){
 // File storage is one checkpoint envelope: {schema, saved_wall_ms, sha256, data}. The hash covers the data; a torn or
 // edited file is detected and reported through `checkpoint`, never silently trusted. A legacy flat object still loads.
 const STORE_SCHEMA='REALITI_STORE_CHECKPOINT_V1';
+// The sealed pocket keeps its keys apart from its records: in a browser, IndexedDB; here, a keys file beside the storage
+// file, written atomically with owner-only permissions. Without it, every launch after the first would find sealed
+// records it cannot open (POCKET_KEYS_MISSING). Keep the two files together; never share or commit the keys file.
+const KEYS_SCHEMA='REALITI_HOST_KEYSTORE_V1';
+function makeKeyStore(filePath){
+  const target=path.resolve(filePath);let keys={};
+  try{const raw=JSON.parse(fs.readFileSync(target,'utf8'));if(raw&&raw.schema===KEYS_SCHEMA&&raw.keys&&typeof raw.keys==='object')keys=raw.keys}catch{keys={}}
+  const flush=()=>{fs.mkdirSync(path.dirname(target),{recursive:true});const tmp=target+'.tmp-'+process.pid;fs.writeFileSync(tmp,JSON.stringify({schema:KEYS_SCHEMA,note:'Private keys for the sealed pocket in the storage file beside this one. Keep the two together; a storage file copied without this one has sealed records nobody can open. Never commit or share.',keys},null,2),{mode:0o600});try{fs.chmodSync(tmp,0o600)}catch{}fs.renameSync(tmp,target)};
+  return {schema:KEYS_SCHEMA,path:target,get:n=>keys[String(n)]||null,put(n,v){keys[String(n)]=v;flush()},del(n){delete keys[String(n)];flush()},clear(){keys={};flush()},names:()=>Object.keys(keys)};
+}
+const keystorePathFor=storagePath=>String(storagePath).replace(/\.json$/i,'')+'.keys.json';
 function makeFileStorage(filePath){
   const target=path.resolve(filePath);let data={},checkpoint={schema:STORE_SCHEMA,loaded:false,saved_wall_ms:null,downtime_ms:null,integrity:'FRESH'};
   try{const raw=JSON.parse(fs.readFileSync(target,'utf8'));
@@ -109,7 +120,7 @@ async function openResident(options={}){
     : verifyIntegrity(runtimePath,options.validationPath);
 
   const html=fs.readFileSync(runtimePath,'utf8');
-  const browserLogs=[];
+  const browserLogs=[];let keystore=null;
   const vc=options.virtualConsole||new VirtualConsole();
   if(options.captureLogs!==false){
     vc.on('error',m=>browserLogs.push({level:'error',text:String(m)}));
@@ -127,6 +138,7 @@ async function openResident(options={}){
         const backing=makeFileStorage(options.storagePath);
         try{Object.defineProperty(w,'REALITI_STORE_CHECKPOINT',{value:backing.checkpoint(),configurable:true})}catch{}
         Object.defineProperty(w,'localStorage',{value:backing,configurable:true});
+        if(options.keystore!==false){keystore=makeKeyStore(options.keystorePath||keystorePathFor(options.storagePath));Object.defineProperty(w,'REALITI_HOST_KEYSTORE',{value:keystore,configurable:true})}
       }
       if(options.residentId!==undefined)w.REALITI_RESIDENT_ID=String(options.residentId);
       // walkBudgetMs (or REALITI_WALK_BUDGET_MS): bound long walks to this much world time per call, so one call
@@ -162,6 +174,7 @@ async function openResident(options={}){
     command:door.run,
     publicApi:Realiti,
     window:dom.window,
+    keystorePath:keystore?keystore.path:null,
     browserLogs,
     residentId:dom.window.REALITI_LOCAL_MEMORY_V1?.residentId?.()||null,
     async snapshot(){
@@ -183,4 +196,4 @@ async function openResident(options={}){
   };
 }
 
-module.exports={openResident,findRuntime,verifyIntegrity,verifyPublicEntry};
+module.exports={openResident,findRuntime,verifyIntegrity,verifyPublicEntry,keystorePathFor};

@@ -44,7 +44,7 @@ Once those checks pass, you are already inside the R&R harness and the starter b
 
 `REALITI_RR_HARNESS_V1` is the included sensory/R&R harness. `REALITI_DEFAULT_IMPRINT_V1` is the generic rich starter imprint. A Node/browser loader used to evaluate the package is only a host loader.
 
-If `ready.pocket === 'unavailable'`, durable Pocket persistence is unavailable in that host. The in-memory world may still run.
+If `ready.pocket === 'unavailable'`, durable Pocket persistence is unavailable in that host; `ready.pocket_reason` says why (`POCKET_KEYS_MISSING`: sealed records exist but their keys are not in this host's key store; `POCKET_IDENTITY_KEYS_MISSING`; `POCKET_READ_ERROR`). `save` and `realiti://pocket` carry the same reason. The in-memory world, world notes, departure memory and the ledger still run and persist on their own. In the headless host the keys live in a keys file beside the storage file; keep the two together.
 
 ## Final resident surface
 

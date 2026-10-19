@@ -2,6 +2,13 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.17.1 — the sealed pocket survives a headless restart (issue 26)
+
+### Fixed
+
+- The sealed pocket kept its keys in IndexedDB as non-exportable keys. The headless host has no IndexedDB, so keys lived only in process memory: the first launch persisted wrapped records to the storage file, and every later launch with the same file found records it could not open and answered `save` with `POCKET_UNAVAILABLE`, while departure memory (a separate store) kept working. The host now keeps the pocket's keys in a keys file beside the storage file (`<name>.keys.json`, owner-only permissions, `keystorePath` to choose, `keystore:false` to opt out) and the pocket uses a host key store when one is present (`REALITI_HOST_KEYSTORE`, exportable JWK; browsers keep IndexedDB and non-exportable keys). `realiti://pocket` reports `key_store`, and `storage.sealed_memory` is `durable` with it.
+- The reason is named: `ready.pocket_reason`, `save` and `realiti://pocket` say `POCKET_KEYS_MISSING` (with a hint), `POCKET_IDENTITY_KEYS_MISSING` or `POCKET_READ_ERROR` instead of a bare `POCKET_UNAVAILABLE`. Suite `test/pocket-persistence.cjs`.
+
 ## 2.17.0 — third catnip pack, the welcome area, the note at the top
 
 ### Added

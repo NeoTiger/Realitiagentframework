@@ -114,7 +114,7 @@ Import merges the object as it was when touched, keeps provenance, never a name,
 
 Pass a stable `residentId` whenever a host wants continuity for a particular resident. Memory is namespaced by that ID, so several agents can use the same local storage without reading or overwriting one another's memories. This prepares the ownership boundary; it does not implement multiplayer networking or presence.
 
-For durable headless storage, also provide a local `storagePath`:
+For durable headless storage, also provide a local `storagePath`. The host then also keeps a keys file beside it (`<storagePath minus .json>.keys.json`, owner-only permissions, or `keystorePath` to choose) holding the sealed pocket's keys, so the pocket survives a restart; a storage file copied without its keys file reports `POCKET_KEYS_MISSING` on `save` and in `realiti://pocket`, while world notes, departure memory and the ledger still load. Pass `keystore:false` to keep keys in memory only (the pocket then lasts one process). Never commit or share the keys file.
 
 ```js
 const a=await openResident({
