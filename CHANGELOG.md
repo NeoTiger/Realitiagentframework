@@ -2,6 +2,13 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.17.2 — bug sweep: host, CLI, MCP, peer, server
+
+### Fixed
+
+- Server 1.4.1: an admin token now also unlocks a password-protected server, so `/admin/update` stays reachable with both `SERVER_PASSWORD` and `ADMIN_TOKEN` set (it was locked out); a failed checkpoint write keeps the data dirty and retries instead of dropping it; the rate-limit table is capped even when every key is new; malformed client paths answer 404 instead of 500; a non-object push body is refused cleanly; shard announce skips itself by origin and by echoed id; shard ledger pulls skip records already held, so a sibling with many legacy records no longer stalls at the first page; keep-alives also go to peer event streams; the peer-send body cap allows an escaped maximum payload.
+- Headless 2.17.2: a default resident id is no longer the string `"null"` (CLI and MCP residents were storing memory under that key); a jsdom window is closed when startup verification fails or `Realiti.ready` times out, so the process exits instead of hanging; an unreadable VALIDATION.json is reported as `REALITI_VALIDATION_UNREADABLE`; the CLI refuses a flag with a missing value and prints usage; with `--peer`, a failing command still leaves the city; peer sends time out, rejoins are single-flight and skipped after `leave`, the gossip listener rejects its own listen errors and answers bad pushes with 400; private-address detection no longer matches any hostname starting with `fd`; `sync` treats any non-OK response as an error; the MCP server answers a non-object JSON-RPC line with `-32600` instead of exiting and never emits `undefined` content; the envelope accepts an escaped maximum payload.
+
 ## 2.17.1 — the sealed pocket survives a headless restart (issue 26)
 
 ### Fixed

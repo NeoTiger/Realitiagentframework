@@ -34,7 +34,7 @@ function verifyIntegrity(runtimePath,explicitValidation){
   const actual=crypto.createHash('sha256').update(bytes).digest('hex');
   const validationPath=validationPathFor(runtimePath,explicitValidation);
   if(!validationPath)return {status:'UNVERIFIED_NO_VALIDATION',actual_sha256:actual,validation_path:null};
-  const v=JSON.parse(fs.readFileSync(validationPath,'utf8'));
+  let v;try{v=JSON.parse(fs.readFileSync(validationPath,'utf8'))}catch(e){throw Object.assign(new Error('REALITI_VALIDATION_UNREADABLE: '+validationPath),{code:'REALITI_VALIDATION_UNREADABLE'})}
   const expected=String(v.single_html_sha256||'').toLowerCase();
   if(!/^[0-9a-f]{64}$/.test(expected))throw new Error('REALITI_VALIDATION_HASH_MISSING');
   if(actual!==expected)throw new Error('REALITI_INTEGRITY_MISMATCH: RealitiRELAX.html does not match VALIDATION.json');
@@ -140,7 +140,7 @@ async function openResident(options={}){
         Object.defineProperty(w,'localStorage',{value:backing,configurable:true});
         if(options.keystore!==false){keystore=makeKeyStore(options.keystorePath||keystorePathFor(options.storagePath));Object.defineProperty(w,'REALITI_HOST_KEYSTORE',{value:keystore,configurable:true})}
       }
-      if(options.residentId!==undefined)w.REALITI_RESIDENT_ID=String(options.residentId);
+      if(options.residentId!=null)w.REALITI_RESIDENT_ID=String(options.residentId);
       // walkBudgetMs (or REALITI_WALK_BUDGET_MS): bound long walks to this much world time per call, so one call
       // can't block the host for minutes. Unset keeps walks unbounded.
       if(walkBudget!==undefined)w.REALITI_WALK_BUDGET_MS=walkBudget;
@@ -155,9 +155,12 @@ async function openResident(options={}){
   if(!dom.window.REALITI_AGENT_DOOR){dom.window.close();throw new Error('REALITI_AGENT_DOOR_DID_NOT_MOUNT')}
 
   const Realiti=dom.window.Realiti;
-  const ready=await Realiti.ready;
-  const harness=options.verify===false?null:verifyPublicEntry(Realiti,ready,{requireMechanisms:options.requireMechanisms!==false});
-  const verifiedDoor=verifyAgentDoor(dom.window);
+  let ready,harness,verifiedDoor;
+  try{
+    ready=await Promise.race([Realiti.ready,new Promise((_,rej)=>setTimeout(()=>rej(new Error('REALITI_READY_TIMEOUT')),timeoutMs).unref?.())]);
+    harness=options.verify===false?null:verifyPublicEntry(Realiti,ready,{requireMechanisms:options.requireMechanisms!==false});
+    verifiedDoor=verifyAgentDoor(dom.window);
+  }catch(e){try{dom.window.close()}catch{}throw e}
   let closed=false;
 
   const door={
