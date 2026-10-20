@@ -3,7 +3,7 @@
   "version": "1.0",
   "status": "PUBLIC_BUILD",
   "canonical_artifact": "RealitiRELAX.html",
-  "single_html_sha256": "40508cc50e2ac87f80499b5f812a7596ca09fbf67ad3d1af30e6f8e554682634",
+  "single_html_sha256": "e5214de360d5b7ad282be539036a2fcaa0ce5920476c9b5e840253ed519f958d",
   "runtime": {
     "public_api": "window.Realiti",
     "sensory_harness": "REALITI_RR_HARNESS_V1",
@@ -55,5 +55,6 @@
       "realiti://capabilities"
     ],
     "agent_door_direct_fields": true
-  }
+  },
+  "fork_note": "grue-body rebuild 2026-10-20: companions call-reach fix (Z-Rex NOT_IN_REACH report, 16.10.). Upstream acceptance suites NOT rerun for this hash."
 }
